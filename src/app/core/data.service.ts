@@ -28,10 +28,15 @@ export class DataService {
     return allReaders.find(reader => reader.readerID === id);
   }
 
-  getAllBooks(): Observable<Book[]> {
+  getAllBooks(): Observable<Book[] | BookTrackerError> {
     console.log('Getting all books from the server.');
-    return this.http.get<Book[]>('/api/books');
+    return this.http.get<Book[]>('/api/books')
+      .pipe(
+        catchError(err => this.handleHttpError(err))
+      );
   }
+
+
   private handleHttpError(error: HttpErrorResponse): Observable<BookTrackerError> {
     let dataError = new BookTrackerError();
     dataError.errorNumber = 100;
